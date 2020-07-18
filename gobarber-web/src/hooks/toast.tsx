@@ -1,11 +1,19 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
-import api from '../services/api'
+import {uuid} from 'uuidv4';
+import api from '../services/api';
 
 import ToastContainer from '../components/ToastContainer/index'
 
 interface ToastContextData {
-  addToast(): void;
-  removeToast(): void;
+  addToast(message: Omit<ToastMessage, 'id'>): void;
+  removeToast(id:string ): void;
+}
+
+export interface ToastMessage {
+  id: string;
+  type ?: 'success' | 'error' | 'info';
+  title: string;
+  description ?: string;
 }
 
 
@@ -13,17 +21,32 @@ const ToastContext = createContext<ToastContextData>({} as ToastContextData);
 
 const ToastProvider: React.FC = ({children}) => {
 
-  const addToast = useCallback(() => {
-    console.log('addToast');
+  const [messages, setMessages] = useState<ToastMessage[]>([]);
+
+  //o Omit usado na linha abaixo, pega toda a interface do tipo ToastMessage, menos o 'id'.
+  const addToast = useCallback(({type, title, description}: Omit<ToastMessage, 'id'>) => {
+    const id = uuid();
+
+    const toast = {
+      id,
+      type,
+      title,
+      description
+    }
+
+    setMessages(oldMessages => [...oldMessages, toast]);
+
   }, []);
-  const removeToast = useCallback(() => {
-    console.log('removeToast');
+
+  const removeToast = useCallback((id: string) => {
+    //função filter retorna um novo array, porém no caso abaixo, excluindo o id informado.
+    setMessages((oldMessages) => oldMessages.filter((message) => message.id != id));
   }, []);
 
   return (
     <ToastContext.Provider value={{addToast, removeToast}}>
       {children}
-      <ToastContainer></ToastContainer>
+      <ToastContainer messages={messages}/>
     </ToastContext.Provider>
 
   );

@@ -57,7 +57,11 @@ const SignIn: React.FC = () => {
       }
 
       //disparar um toast
-      addToast();
+      addToast({
+        type: 'success',
+        title: 'erro auth',
+        description: 'occorreu erro'
+      });
 
     }
   }, [signIn, addToast]);
