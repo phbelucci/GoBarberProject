@@ -3,12 +3,13 @@ import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import { Link } from 'react-router-dom';
 
 import { useAuth } from '../../hooks/auth'
 import { useToast } from '../../hooks/toast'
 
 import getValidationsError from '../../utils/getValidationsError';
-import {Container,Content,Background } from './styles';
+import {Container,Content,Background, AnimationContainer} from './styles';
 
 import Input from '../../components/Input/index';
 import Button from '../../components/Button/index';
@@ -23,6 +24,7 @@ interface SignInFormData {
 const SignIn: React.FC = () => {
 
   const formRef = useRef<FormHandles>(null);
+
 
   const { signIn } = useAuth();
   const { addToast } = useToast();
@@ -54,6 +56,8 @@ const SignIn: React.FC = () => {
       if(err instanceof Yup.ValidationError){
         const errors = getValidationsError(err);
         formRef.current?.setErrors(errors);
+
+        return;
       }
 
       //disparar um toast
@@ -70,6 +74,7 @@ const SignIn: React.FC = () => {
 
     <Container>
       <Content>
+        <AnimationContainer>
         <img src={logoGoBarber} alt="GoBarber"/>
 
         <Form ref={formRef} onSubmit={handleSubmit}>
@@ -93,14 +98,16 @@ const SignIn: React.FC = () => {
           <a href="forgot">Esqueci minha senha</a>
 
         </Form>
-        <a href="ok">
+        <Link to="/signup">
           <FiLogIn/>
           Criar conta
-        </a>
+        </Link>
+        </AnimationContainer>
       </Content>
-      <Background>
 
+      <Background>
       </Background>
+
     </Container>
   );
 
